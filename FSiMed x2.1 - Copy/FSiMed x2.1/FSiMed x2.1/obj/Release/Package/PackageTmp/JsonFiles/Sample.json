@@ -1,0 +1,27 @@
+﻿[
+  {
+    "id": "1",
+    "testname": "CBC",
+    "amount": 300
+  },
+  {
+    "id": "2",
+    "testname": "LIPID PROFILE",
+    "amount": 700
+  },
+  {
+    "id": "3",
+    "testname": "SUGAR FASTING",
+    "amount": 70
+  },
+  {
+    "id": "4",
+    "testname": "2D ECHO",
+    "amount": 1260
+  },
+  {
+    "id": "5",
+    "testname": "TMT TEST",
+    "amount": 660
+  }
+]

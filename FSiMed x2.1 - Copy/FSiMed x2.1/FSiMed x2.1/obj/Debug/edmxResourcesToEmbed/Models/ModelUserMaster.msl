@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="fsimed_configdbModelStoreContainer" CdmEntityContainer="fsimed_configdbEntities">
+    <EntitySetMapping Name="user_master">
+      <EntityTypeMapping TypeName="fsimed_configdbModel.user_master">
+        <MappingFragment StoreEntitySet="user_master">
+          <ScalarProperty Name="DOCTOR_TYPE" ColumnName="DOCTOR_TYPE" />
+          <ScalarProperty Name="NEW_ENTITY_CODE" ColumnName="NEW_ENTITY_CODE" />
+          <ScalarProperty Name="NEW_USER_ID" ColumnName="NEW_USER_ID" />
+          <ScalarProperty Name="ACC_REG_FLAG" ColumnName="ACC_REG_FLAG" />
+          <ScalarProperty Name="SCHEDULE_FLG" ColumnName="SCHEDULE_FLG" />
+          <ScalarProperty Name="ALLOW_ADJ_DIS_WAIVER" ColumnName="ALLOW_ADJ_DIS_WAIVER" />
+          <ScalarProperty Name="LOGIN_STATUS" ColumnName="LOGIN_STATUS" />
+          <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+          <ScalarProperty Name="MIDDLE_NAME" ColumnName="MIDDLE_NAME" />
+          <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+          <ScalarProperty Name="ENTITY_CODE" ColumnName="ENTITY_CODE" />
+          <ScalarProperty Name="USER_ID" ColumnName="USER_ID" />
+          <ScalarProperty Name="USER_NAME" ColumnName="USER_NAME" />
+          <ScalarProperty Name="CURRENT_PASSWORD" ColumnName="CURRENT_PASSWORD" />
+          <ScalarProperty Name="PASSWORD_SET_DATE" ColumnName="PASSWORD_SET_DATE" />
+          <ScalarProperty Name="PASSWORD_1" ColumnName="PASSWORD_1" />
+          <ScalarProperty Name="PASSWORD_2" ColumnName="PASSWORD_2" />
+          <ScalarProperty Name="PASSWORD_3" ColumnName="PASSWORD_3" />
+          <ScalarProperty Name="PASSWORD_4" ColumnName="PASSWORD_4" />
+          <ScalarProperty Name="PASSWORD_5" ColumnName="PASSWORD_5" />
+          <ScalarProperty Name="BLOCK_STATUS" ColumnName="BLOCK_STATUS" />
+          <ScalarProperty Name="LOGIN_FAIL_ATTEMPTS" ColumnName="LOGIN_FAIL_ATTEMPTS" />
+          <ScalarProperty Name="UPDATE_PASSWORD_FLAG" ColumnName="UPDATE_PASSWORD_FLAG" />
+          <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+          <ScalarProperty Name="USER_CREATE" ColumnName="USER_CREATE" />
+          <ScalarProperty Name="DATE_CREATE" ColumnName="DATE_CREATE" />
+          <ScalarProperty Name="USER_UPDATE" ColumnName="USER_UPDATE" />
+          <ScalarProperty Name="DATE_UPDATE" ColumnName="DATE_UPDATE" />
+          <ScalarProperty Name="ENTITY_GROUP" ColumnName="ENTITY_GROUP" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="temps">
+      <EntityTypeMapping TypeName="fsimed_configdbModel.temp">
+        <MappingFragment StoreEntitySet="temp">
+          <ScalarProperty Name="name" ColumnName="name" />
+          <ScalarProperty Name="id" ColumnName="id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

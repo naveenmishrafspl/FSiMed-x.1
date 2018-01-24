@@ -1,0 +1,43 @@
+﻿.txtDisabled {
+    width:200px;
+    text-transform:uppercase;
+}
+
+.txtNormal {
+    width:200px;
+    text-transform:uppercase;
+}
+
+.test {
+    background-color:#A239CA;
+    color:whitesmoke;
+}
+.txtAmount {
+    width:100px;
+}
+
+.txtAmount:focus
+{
+    /*border-color:#A239CA;*/
+    border-width:2px;
+}
+
+.ddlNormal{
+     width:200px;
+     text-transform:uppercase;
+}
+
+.ddlDisabled {
+     width:200px;
+     text-transform:uppercase;
+}
+
+.txtAmountLength {
+    width:160px;
+}
+
+.txtAmountLength:focus
+{
+    /*border-color:#A239CA;*/
+    border-width:2px;
+}

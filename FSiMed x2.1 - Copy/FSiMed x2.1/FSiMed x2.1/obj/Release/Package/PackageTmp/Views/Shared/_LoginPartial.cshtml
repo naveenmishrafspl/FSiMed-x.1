@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNet.Identity
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#loginLink").hide();
+    });
+</script>
+
+@using (Html.BeginForm(FormMethod.Post))
+{
+    if (Session["User_Id"] != null)
+    {
+        <script type="text/javascript">
+                $(document).ready(function () {
+                    $("#loginLink").show();
+                });
+        </script>
+    }
+}
+
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account",FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+    @Html.AntiForgeryToken()
+      
+    <ul class="nav navbar-nav navbar-right">
+        <li>
+            @Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
+        </li>
+        <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+    </ul>
+    }
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        <li>@Html.ActionLink("Log Out", "Index", "Home", routeValues: null, htmlAttributes: new { id = "loginLink", @style = "font-size:18px;font-family:'Trebuchet MS';background-color:#FF3B3F;color:whitesmoke;" })</li>
+    </ul>
+}

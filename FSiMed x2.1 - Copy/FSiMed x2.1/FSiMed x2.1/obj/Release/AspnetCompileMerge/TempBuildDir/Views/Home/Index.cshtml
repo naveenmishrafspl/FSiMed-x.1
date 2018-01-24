@@ -1,0 +1,86 @@
+﻿@model FSiMed_x2._1.Models.user_master
+
+@{
+    ViewBag.Title = "User Login";
+}
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/Check_Numeric.js"></script>
+
+<script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnLogin").click(function () {
+
+                var vUserid = $("#txtUserID");
+                var vPassword = $("#txtPassword");
+
+                if ($(vUserid).val().trim() == "") {
+                    alert('User Id cannot be left blank');
+                    $(vUserid).val('');
+                    $(vUserid).focus();
+                    return false;
+                }
+                else if ($(vPassword).val().trim() == "") {
+                    alert('Password cannot be left blank');
+                    $(vPassword).val('');
+                    $(vPassword).focus();
+                    return false;
+                }
+            });
+        });
+
+</script>
+
+<h1>User Login</h1>
+@using (Html.BeginForm(FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    if (ViewBag.Res != null)
+    {
+        <script type="text/javascript">
+            window.onload = function () {
+                if('@ViewBag.Res' == 'U')
+                {
+                    alert("User Id not found");
+                    $("#txtUserID").focus();
+                    $("#txtUserID").val('@ViewBag.userId');
+                    return false;
+                }
+                else if ('@ViewBag.Res' == 'P') {
+                    alert("Enter the correct password");
+                    $("#txtPassword").focus();
+                    $("#txtUserID").val('@ViewBag.userId');
+                    return false;
+                }
+
+                
+            };
+        </script>
+    }
+ 
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+      
+        <div class="form-group">
+            @Html.LabelFor(model => model.USER_ID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.USER_ID, new { htmlAttributes = new { @class = "form-control", @id = "txtUserID", @MaxLength = "5", @onkeypress= "javascript:return checkNumericValue(event);" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CURRENT_PASSWORD, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.CURRENT_PASSWORD, new { htmlAttributes = new { @class = "form-control", @id = "txtPassword",  @MaxLength = "20", } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-4">
+                <input id="btnLogin" type="submit" value="Login" formmethod="post" formaction="home/Login" class="btn btn-info" />
+            </div>
+        </div>
+    </div>
+}
+

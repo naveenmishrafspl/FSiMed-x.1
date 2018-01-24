@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="fsimed_configdbModel.Store" Provider="MySql.Data.MySqlClient" ProviderManifestToken="5.5" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="user_master">
+          <Key>
+            <PropertyRef Name="USER_ID" />
+          </Key>
+          <Property Name="ENTITY_CODE" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="USER_ID" Type="int" Nullable="false" />
+          <Property Name="FIRST_NAME" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="MIDDLE_NAME" Type="varchar" MaxLength="60" />
+          <Property Name="LAST_NAME" Type="varchar" MaxLength="60" />
+          <Property Name="USER_NAME" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="CURRENT_PASSWORD" Type="varchar" MaxLength="60" Nullable="false" />
+          <Property Name="PASSWORD_SET_DATE" Type="datetime" Precision="0" Nullable="false" />
+          <Property Name="PASSWORD_1" Type="varchar" MaxLength="60" />
+          <Property Name="PASSWORD_2" Type="varchar" MaxLength="60" />
+          <Property Name="PASSWORD_3" Type="varchar" MaxLength="60" />
+          <Property Name="PASSWORD_4" Type="varchar" MaxLength="60" />
+          <Property Name="PASSWORD_5" Type="varchar" MaxLength="60" />
+          <Property Name="LOGIN_STATUS" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="BLOCK_STATUS" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="LOGIN_FAIL_ATTEMPTS" Type="int" Nullable="false" />
+          <Property Name="UPDATE_PASSWORD_FLAG" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="ALLOW_ADJ_DIS_WAIVER" Type="varchar" MaxLength="1" />
+          <Property Name="STATUS" Type="varchar" MaxLength="1" Nullable="false" />
+          <Property Name="USER_CREATE" Type="int" Nullable="false" />
+          <Property Name="DATE_CREATE" Type="datetime" Precision="0" Nullable="false" />
+          <Property Name="USER_UPDATE" Type="int" />
+          <Property Name="DATE_UPDATE" Type="datetime" Precision="0" />
+          <Property Name="SCHEDULE_FLG" Type="varchar" MaxLength="1" />
+          <Property Name="ACC_REG_FLAG" Type="varchar" MaxLength="1" />
+          <Property Name="NEW_USER_ID" Type="int" />
+          <Property Name="NEW_ENTITY_CODE" Type="varchar" MaxLength="5" />
+          <Property Name="ENTITY_GROUP" Type="varchar" MaxLength="5" />
+          <Property Name="DOCTOR_TYPE" Type="varchar" MaxLength="50" />
+        </EntityType>
+        
+        <EntityContainer Name="fsimed_configdbModelStoreContainer">
+          <EntitySet Name="user_master" EntityType="Self.user_master" Schema="fsimed_configdb" store:Type="Tables" />
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="fsimed_configdbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="user_master">
+          <Key>
+            <PropertyRef Name="USER_ID" />
+          </Key>
+          <Property Name="ENTITY_CODE" Type="String" MaxLength="5" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USER_ID" Type="Int32" Nullable="false" />
+          <Property Name="FIRST_NAME" Type="String" MaxLength="60" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="MIDDLE_NAME" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
+          <Property Name="LAST_NAME" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
+          <Property Name="USER_NAME" Type="String" MaxLength="60" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CURRENT_PASSWORD" Type="String" MaxLength="60" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="PASSWORD_SET_DATE" Type="DateTime" Nullable="false" />
+          <Property Name="PASSWORD_1" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
+          <Property Name="PASSWORD_2" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
+          <Property Name="PASSWORD_3" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
+          <Property Name="PASSWORD_4" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
+          <Property Name="PASSWORD_5" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
+          <Property Name="LOGIN_STATUS" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="BLOCK_STATUS" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LOGIN_FAIL_ATTEMPTS" Type="Int32" Nullable="false" />
+          <Property Name="UPDATE_PASSWORD_FLAG" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ALLOW_ADJ_DIS_WAIVER" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="STATUS" Type="String" MaxLength="1" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="USER_CREATE" Type="Int32" Nullable="false" />
+          <Property Name="DATE_CREATE" Type="DateTime" Nullable="false" />
+          <Property Name="USER_UPDATE" Type="Int32" />
+          <Property Name="DATE_UPDATE" Type="DateTime" />
+          <Property Name="SCHEDULE_FLG" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="ACC_REG_FLAG" Type="String" MaxLength="1" FixedLength="false" Unicode="false" />
+          <Property Name="NEW_USER_ID" Type="Int32" />
+          <Property Name="NEW_ENTITY_CODE" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="ENTITY_GROUP" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="DOCTOR_TYPE" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityContainer Name="fsimed_configdbEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="user_master" EntityType="Self.user_master" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="fsimed_configdbModelStoreContainer" CdmEntityContainer="fsimed_configdbEntities">
+          <EntitySetMapping Name="user_master">
+            <EntityTypeMapping TypeName="fsimed_configdbModel.user_master">
+              <MappingFragment StoreEntitySet="user_master">
+                <ScalarProperty Name="ENTITY_CODE" ColumnName="ENTITY_CODE" />
+                <ScalarProperty Name="USER_ID" ColumnName="USER_ID" />
+                <ScalarProperty Name="FIRST_NAME" ColumnName="FIRST_NAME" />
+                <ScalarProperty Name="MIDDLE_NAME" ColumnName="MIDDLE_NAME" />
+                <ScalarProperty Name="LAST_NAME" ColumnName="LAST_NAME" />
+                <ScalarProperty Name="USER_NAME" ColumnName="USER_NAME" />
+                <ScalarProperty Name="CURRENT_PASSWORD" ColumnName="CURRENT_PASSWORD" />
+                <ScalarProperty Name="PASSWORD_SET_DATE" ColumnName="PASSWORD_SET_DATE" />
+                <ScalarProperty Name="PASSWORD_1" ColumnName="PASSWORD_1" />
+                <ScalarProperty Name="PASSWORD_2" ColumnName="PASSWORD_2" />
+                <ScalarProperty Name="PASSWORD_3" ColumnName="PASSWORD_3" />
+                <ScalarProperty Name="PASSWORD_4" ColumnName="PASSWORD_4" />
+                <ScalarProperty Name="PASSWORD_5" ColumnName="PASSWORD_5" />
+                <ScalarProperty Name="LOGIN_STATUS" ColumnName="LOGIN_STATUS" />
+                <ScalarProperty Name="BLOCK_STATUS" ColumnName="BLOCK_STATUS" />
+                <ScalarProperty Name="LOGIN_FAIL_ATTEMPTS" ColumnName="LOGIN_FAIL_ATTEMPTS" />
+                <ScalarProperty Name="UPDATE_PASSWORD_FLAG" ColumnName="UPDATE_PASSWORD_FLAG" />
+                <ScalarProperty Name="ALLOW_ADJ_DIS_WAIVER" ColumnName="ALLOW_ADJ_DIS_WAIVER" />
+                <ScalarProperty Name="STATUS" ColumnName="STATUS" />
+                <ScalarProperty Name="USER_CREATE" ColumnName="USER_CREATE" />
+                <ScalarProperty Name="DATE_CREATE" ColumnName="DATE_CREATE" />
+                <ScalarProperty Name="USER_UPDATE" ColumnName="USER_UPDATE" />
+                <ScalarProperty Name="DATE_UPDATE" ColumnName="DATE_UPDATE" />
+                <ScalarProperty Name="SCHEDULE_FLG" ColumnName="SCHEDULE_FLG" />
+                <ScalarProperty Name="ACC_REG_FLAG" ColumnName="ACC_REG_FLAG" />
+                <ScalarProperty Name="NEW_USER_ID" ColumnName="NEW_USER_ID" />
+                <ScalarProperty Name="NEW_ENTITY_CODE" ColumnName="NEW_ENTITY_CODE" />
+                <ScalarProperty Name="ENTITY_GROUP" ColumnName="ENTITY_GROUP" />
+                <ScalarProperty Name="DOCTOR_TYPE" ColumnName="DOCTOR_TYPE" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

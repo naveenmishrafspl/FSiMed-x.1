@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html>
+<head style="position:fixed;">
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <link href="~/StyleSheets/StyleSheetMain.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#lblUserName").hide();
+            $("#btnHamBurger").hide();
+            $(".cross").hide();
+            $(".menu").hide();
+            $(".hamburger").click(function () {
+                $(".menu").slideToggle("slow", function () {
+                    $(".hamburger").hide();
+                    $(".cross").show();
+                });
+            });
+
+            $(".cross").click(function () {
+                $(".menu").slideToggle("slow", function () {
+                    $(".cross").hide();
+                    $(".hamburger").show();
+                });
+            });
+        });
+    </script>
+</head>
+<body> @*style="background-color:#D7CEC7;"*@
+
+    @using (Html.BeginForm(FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        if (Session["User_Id"] != null)
+        {
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $("#btnHamBurger").show();
+                    $("#lblUserName").show();
+                    loadXml();
+                    $("#lblUserName").text('Welcome - @Session["User_Name"]');
+                });
+            </script>
+        }
+    }
+    <button id="btnHamBurger" class="hamburger" style="font-size:18px;font-family:'Trebuchet MS';background-color:#FF3B3F;color:whitesmoke;">&#9776;</button>
+    <button id="btnCross" class="cross" style="font-size:18px;font-family:'Trebuchet MS';background-color:#FF3B3F;color:whitesmoke;">&#735;</button>
+
+    <div id="dvMenu" class="menu" style="font-size:18px;font-family:'Trebuchet MS';background-color:#A239CA;color:darkgray;">
+
+    </div>
+    <div class="navbar navbar-inverse navbar-fixed-top" style="background-color:#BFD8D2;color:black;">
+        <div class="container">
+            <div class="navbar-header">
+               
+                @Html.Label("lblApplicationName", "FSiMed x2.1", htmlAttributes: new { @id = "lblAppName", @class = "navbar-form", @style = "font-size:18px;font-family:'Trebuchet MS';", @Text = "FSiMed x2.1", @align = "center", @coalspan = "1"})
+                @Html.Label("UserName", htmlAttributes: new { @id = "lblUserName", @Text = "", @class = "navbar-form", @style = "font-size:18px;font-family:'Trebuchet MS';", @align = "center", @coalspan = "1", @visible = "False" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav"></ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+
+    <div class="container body-content">
+        @RenderBody()
+       
+    </div>
+
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+    function loadXml() {
+        $.ajax({
+            type: "get",
+            url: "XML Files/demo.xml",
+            dataType: "xml",
+            success: function (xml) {
+                $(xml).find('Menu').each(function () {
+                    if ($(this).text() != "-") {
+                        $("#dvMenu").append('<ul><a href="' + $(this).find('view').text() + '"><li>' + $(this).find('name').text() + '</li></a></ul>');
+                    }
+                });
+            },
+            error: function (e) {
+            }
+        });
+    }
+
+    </script>
+
+</body>
+</html>

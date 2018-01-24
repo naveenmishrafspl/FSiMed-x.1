@@ -1,0 +1,763 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+}
+
+<head>
+
+    <link href="~/CSS/Style.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <script src="~/Scripts/html5-3.6-respond-1.1.0.min.js"></script>
+    <script src="~/Scripts/jQuery.print.js"></script>
+    
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnAdd").click(function () {
+                var Id = $("#ddlType").val();
+                var name = $("#ddlTest").val();
+                var address = $("#txtDays").val();
+                var mobileNo = $("#txtMobileNo").val();
+                var vCnt = 0;
+                var vTotal = 0;
+                var vLen = $("#tblMain tr").length - 1;
+
+                // Id = vLen;
+                $("#tblMain tr").each(function (e) {
+                    if (e > 1) {
+                        var ExId = $(this).find('td').eq(1).text();
+                        if (ExId == Id) {
+                            ErrorAlert(btnAdd, 'duplicate record');
+                            vCnt = 1;
+                            return false;
+                        }
+                    }
+                });
+
+                //if (vCnt == 0) {
+                //    $("#tblMain tbody").append('<tr><td>' + Id + '</td><td>' + name + '</td><td>' + address + '</td><td>' + mobileNo +
+                //                               '</td><td><span id="btnAdd" onclick="Delete(this);" class="btn btn-danger glyphicon glyphicon-trash"></span></td></tr>');
+                //}
+                if (vCnt == 0) {
+                    $('<tr><td>' + Id + '</td><td>' + Id + '</td><td>' + name + '</td><td>' + address + '</td>' +
+                        ' <td> <input id="txtQty" onkeydown="getQty(this, event);" type="text" value="0" class="form-control input-sm txtAmount" /> </td><td><span id="btnAdd" onclick="Delete(this);" class="btn btn-danger glyphicon glyphicon-trash"></span></td></tr>').insertAfter('#tblMain > tbody > tr:eq(1)');
+                }
+
+                Calculation();
+
+                
+
+            });
+
+            window.onload = function () {
+                $("#divalert").hide();
+            }
+
+            $("#txtPatientIdSearch").on('keydown', function (e) {
+
+                if (e.keyCode == 13 || e.keyCode == 9) {
+                    localStorage.setItem("id", $(this).val());
+                    $("#txtPatientNameSearch").focus();
+                }
+            });
+
+            $("#txtPatientNameSearch").on('keydown', function (e) {
+
+                if (e.keyCode == 13 || e.keyCode == 9) {
+                    localStorage.setItem("name", $(this).val());
+                    $("#btnSearch").focus();
+                }
+            });
+
+            $("#txtPatientIdSearch, #txtPatientNameSearch").on('keyup', function () {
+
+                var inputvalue = $(this).val();
+
+                if (inputvalue.length > 0) {
+
+                    var id = "";
+
+                    var Disid = localStorage.getItem("id");
+                    var Disname = localStorage.getItem("name");
+
+                    if ($(this).attr('id') == "txtPatientNameSearch") {
+                        id = localStorage.getItem("name");
+                    }
+                    else {
+                        id = localStorage.getItem("id");
+                    }
+
+                    //alert(id);
+                    if (inputvalue.trim().toUpperCase().indexOf(id) >= 0 && id != "") {
+                        $("#divalert").show();
+                        $("#divalert").html('');
+                        var p = $("#txtPatientIdSearch");
+                        var offset = p.offset();
+
+                        $("#divalert").offset({ top: offset.top + 40, left: offset.left });
+                        $("#divalert").append('Your Last Entry Missed for ID : ' + Disid + ', NAME : ' + Disname);
+                    }
+                    else {
+                        $("#divalert").hide();
+                    }
+                }
+                else {
+                    $("#divalert").hide();
+                }
+            });
+
+           
+           
+
+        });
+
+        function Delete(a) {
+            $(a).parents("tr").remove();
+            Calculation();
+        }
+
+        function loaddata() {
+            alert('aaaa');
+        }
+
+        function removeLocalStorageKey() {
+            var keys = ["id", "name"];
+            localStorage.removeItem(keys);
+        }
+
+        function Calculation() {
+            var vTotal = 0;
+            $("#txtBillAmt").val(0);
+            $("#tblMain tr").each(function (e) {
+                if (!isNaN(parseInt($(this).find('td').eq(3).text()))) {
+                    vTotal += parseInt($(this).find('td').eq(3).text());
+                    $("#txtBillAmt").val(vTotal);
+                }
+            });
+        }
+
+        function saveDate() {
+            var btnSave = $("#btnFinalSave");
+            btnSave.attr('disabled', true);
+            btnSave.val('Please Wait...');
+
+            var vChildProp = "";
+            var vArr = [];
+
+            $("#tblMain tr").each(function (e) {
+                if (e > 1) {
+                    vChildProp = {
+                        TypeName: $(this).find('td').eq(0).text(),
+                        TestName: $(this).find('td').eq(1).text(),
+                        Days: $(this).find('td').eq(2).text(),
+                        TotalAmt: $(this).find('td').eq(3).text()
+                    };
+
+                    vArr.push(vChildProp);
+                }
+
+            });
+
+            var commonBilling = {
+                PatientId: $('#txtPatientId').val(),
+                VisitNo: 1,
+                TotalAmt: $('#txtBillAmt').val(),
+                Discount: $('#txtDisc').val(),
+                NetAmount: $('#txtReceived').val(),
+                Details: vArr
+            };
+
+
+            $.ajax({
+                type: "POST",
+                url: "/Home/Create",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({ model: commonBilling }),
+                success: function (a) {
+                    alert(a);
+                    btnSave.attr('disabled', false);
+                    btnSave.val('SAVE');
+                },
+                error: function (b, c, d) {
+                    alert(d)
+                    btnSave.attr('disabled', false);
+                    btnSave.val('SAVE');
+                }
+            });
+
+        }
+
+        function getQty(a, event) {
+
+            if (event.keyCode == 13) {
+                $(a).parents('tr').next('tr').find('input[id="txtQty"]').focus();
+            }
+        }
+
+        function ReadJson() {
+            $.ajax({
+                type: "get",
+                url: "/JsonFiles/Xray.json",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    $("#ddlTest").text('');
+                    $.each(data, function (e) {
+                        //if ($("#ddlTest :selected").val() == "Select Test") {
+                        //    $("#txtMobileNo").val(0);
+                        //    return false;
+                        //}
+                        //else {
+                        //    if (data[e].name == $("#ddlTest :selected").val()) {
+                        //        $("#txtMobileNo").val(data[e].amount);
+                        //        return false;
+                        //    }
+                        //}
+
+                        $("#ddlTest").append("<option>" + data[e].name + "</option>");
+                    });
+                },
+                error: function (a) {
+                    alert(a);
+                }
+            });
+
+        }
+
+        function Contentprint() {
+            //for html printing with javascript
+            var html = '<table width="580" align ="center" cellpadding="0" cellspacing="4"> ' +
+                                         ' <tr> ' +
+                                         ' <td valign="top"> ' +
+                                         ' <img src="/Images/CityHospitalGkp.jpg" width="100px" height="100px" /> ' +
+                                          ' </td> ' +
+                                         ' <td valign="top"> ' +
+                                         ' <table cellpadding="0" cellspacing="2" style="width: 100%"> ' +
+                                          ' <tr> ' +
+                                          ' <td colspan="3"> ' +
+                                           ' <span class="label-info"> CITY HOSPITAL THE MULTI SPECIALITY HOSPITAL </span> </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td colspan="3"> ' +
+                                         ' <span class="label-info">  +Moglaha, Medical College Road, Gorakhpur </span> </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td colspan="3"> ' +
+                                         ' <span class="stdLabelPrint"> PHONE NO :0551-2505152, +91-7234006501</span> </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrint"> EMAIL :cityhospital2016@gmail.com </span> ' +
+                                         ' </td> ' +
+                                         ' <td class="tdSpace4px"> ' + ' </td> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrint">  WEBSITE : </span> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' </table> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' </table> ' +
+                                         ' <table width="580" align ="center" cellpadding="0" cellspacing="4"> ' +
+                                          ' <tr> ' +
+                                          ' <td colspan="2"> ' +
+                                         ' <hr style="margin:2px" /> ' +
+                                         ' <h5 style="margin:0; text-align:center"> Payment Receipt</h5> ' +
+                                         ' <hr style="margin:2px" /> ' +
+                                          ' </td> ' +
+                                          ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td colspan="2" align="center"> ' +
+                                         ' <table class="tableInputContentPrint" cellpadding="0" cellspacing="0" style="width: 100%;"> ' +
+                                         ' <tr> ' +
+                                         ' <td align="left"> ' +
+                                         ' <span class="stdLabelOPDRoom"> OPD-1 </span> ' +
+                                         ' </td> ' +
+                                         ' <td align="right"> ' +
+                                         ' <span class="stdLabelOPDRoom"> APP NO : 32</span> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' </table> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td colspan="2" align="center"> ' +
+                                         ' <hr style="margin:2px" /> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td colspan="2" align="center"> ' +
+                                         ' <table class="tableInputContentPrint" cellpadding="0" cellspacing="4" style="width: 100%; text-align:left; background-color:#e4e4e4"> ' +
+                                         ' <tr> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> PAT ID </span> ' +
+                                         ' </td> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> 100001677 </span> ' +
+                                         ' </td> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> REG NO </span> ' +
+                                         ' </td> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> 10000001677</span> ' +
+                                         ' </td> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> VISIT DATE </span> ' +
+                                         ' </td> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> 19/08/2017</span> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> PAT NAME </span> ' +
+                                         ' </td> ' +
+                                         ' <td colspan="3"> ' +
+                                         ' <span class="stdLabelPrintForOPD"> APSHA</span> ' +
+                                         ' </td> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> AGE/SEX :</span> ' +
+                                         ' </td> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> 27 </span> ' +
+                                         ' </td> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> MOBILE NO :</span> ' +
+                                         ' </td> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> 91-9389021049 </span> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> ADDRESS </span> ' +
+                                         ' </td> ' +
+                                         ' <td colspan="7"> ' +
+                                         ' <span class="stdLabelPrintForOPD"> CHOTE KAJIPUR   GORAKHPUR</span> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD">  +CONSULTANT :</span> ' +
+                                         ' </td> ' +
+                                         ' <td colspan="7"> ' +
+                                         ' <span class="stdLabelPrintForOPD"> Dr. A.K.  MALL [ M.D. , M.A.S.I ]</span> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> PAYMENT MODE :</span> ' +
+                                         ' </td> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> CASH </span> ' +
+                                         ' </td> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> OPD TYPE </span> ' +
+                                         ' </td> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> REGULAR</span> ' +
+                                         ' </td> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrintForOPD"> BILL NO : </span> ' +
+                                         ' </td> ' +
+                                         ' <td colspan="2"> ' +
+                                         ' <span class="stdLabelPrintForOPD"> OPD/1718/08/750 </span> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' </table> ' +
+                                         ' <hr /> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td colspan="2"> ' +
+                                         ' <table class="tableInputContentPrint" cellpadding="0" cellspacing="2" style="width: 100%;"> ' +
+                                         ' <tr> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrint"> CONSULTATION FEES :</span> ' +
+                                         ' </td> ' +
+                                         ' <td align="right"> ' +
+                                         ' <span class="stdLabelPrint"> 300 </span> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrint"> DISCOUNT </span> ' +
+                                         ' </td> ' +
+                                         ' <td align="right"> ' +
+                                         ' <span class="stdLabelPrint"> 300 </span> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td> ' +
+                                         ' <span class="stdLabelPrint"> NET RECEIVED </span> ' +
+                                         ' </td> ' +
+                                         ' <td align="right"> ' +
+                                         ' <span class="stdLabelPrint"> 0</span> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' </table> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td colspan="2"> ' +
+                                         ' <hr style="margin:2px" /> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td colspan="2"> ' +
+                                         ' <table class="tableInputContentPrint" cellpadding="0" cellspacing="2" style="width: 100%;"> ' +
+                                         ' <tr> ' +
+                                         ' <td align="right"> ' +
+                                         ' <span class="stdLabelPrintAmtInWords">  +Rs.      Only</span> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' </table> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' <tr> ' +
+                                         ' <td colspan="2"> ' +
+                                         ' <table class="tableInputContentPrint" cellpadding="0" cellspacing="4" style="width: 100%;"> ' +
+                                         ' <tr> ' +
+                                         ' <td align="left" style="width: 20%;"> ' +
+                                         ' <span class="stdLabelPrintForOPD"> 19-Aug-2017 17:09:05 </span> ' +
+                                         ' </td> ' +
+                                         ' <td align="right" style="width: 15%;"> ' +
+                                         ' <span class="stdLabelPrintForOPD"> PRINTED BY :</span> ' +
+                                         ' </td> ' +
+                                         ' <td align="right" style="width: 25%;"> ' +
+                                         ' <span class="stdLabelPrintForOPD"> AMIT  MISHRA</span> ' +
+                                         ' </td> ' +
+                                         ' <td align="right" style="width: 15%;"> ' +
+                                         ' <span class="stdLabelPrintForOPD">  CREATED BY  </span> ' +
+                                         ' </td> ' +
+                                         ' <td align="right" style="width: 25%;"> ' +
+                                         ' <span class="stdLabelPrintForOPD"> AMIT  MISHRA </span> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' </table> ' +
+                                         ' </td> ' +
+                                         ' </tr> ' +
+                                         ' </table>';
+
+            var printWindow = window.open('', '', 'height=400,width=800');
+            printWindow.document.write('<html><head><title>DIV Contents</title>');
+            printWindow.document.write('</head><body onload="window.print(); window.close();" > <table> <tr> <td> </td> </tr> </table>');
+            printWindow.document.write(html);
+            printWindow.document.write('</body></html>');
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            //printWindow.print();
+            //printWindow.close();
+
+            localStorage.setItem("print", html);
+            $("#txtDays").focus();
+        }
+
+        function reprintreceipt()
+        {
+            var html = localStorage.getItem("print");
+
+            var printWindow = window.open('', '', 'height=400,width=800');
+            printWindow.document.write('<html><head><title>DIV Contents</title>');
+            printWindow.document.write('</head><body onload="window.print(); window.close();" > <table> <tr> <td> </td> </tr> </table>');
+            printWindow.document.write(html);
+            printWindow.document.write('</body></html>');
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+        }
+
+        function getData() {
+
+            var vInput1 = $("#ddlTest :selected").val();
+            $("#txtAmt").val(0);
+
+            $.ajax({
+                type: "post",
+                url: "/Home/getData",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: '{vQueryString: "' + vInput1 + '" }',
+                success: function (a) {
+                    $("#txtAmt").val(a);
+                },
+                error: function (b) {
+                    alert(b);
+                    btnSave.attr('disabled', false);
+                    btnSave.val('SAVE');
+                }
+            });
+
+        }
+
+        function ReadApp()
+        {
+           
+            $("#divChild").find('div').children().each(function (e, a) {
+                alert($(a).text());
+            });
+
+           // alert($("#divChild").find('button[id="btn2"]').text());
+            
+        }
+
+        @*function Remove()
+        {
+           
+            @System.Web.HttpContext.Current.Application["Value"] = "";
+          
+        }*@
+
+        
+    </script>
+
+</head>
+
+<body>
+    
+    <div class="col-md-12" style="height:20px;"></div>
+    <div id="example"></div>
+    <div class="container" id="divMain1">
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="container">
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <div class="col-md-5 col-sm-pull-1">
+                                <div class="container">
+                                    <div class="row">
+                                        <h2>General Billing Screen</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7" style="padding-top:22px;">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-sm-2 col-sm-pull-1">
+                                                <input id="txtPatientIdSearch" type="text" value="" class="form-control input-sm" style="width:180px;font-family:sans-serif;" placeholder="Search with Patient Id" />
+                                            </div>
+                                            <div class="col-sm-offset-2 col-sm-2 col-sm-pull-1">
+                                                <input id="txtPatientNameSearch" type="text" value="" class="form-control input-sm" style="width:180px;font-family:sans-serif;" placeholder="Search with Patient Name" />
+                                            </div>
+                                            <div class="col-sm-offset-2 col-sm-2 col-sm-pull-1">
+                                                <input id="txtMobileNoSearch" type="text" value="" class="form-control input-sm" style="width:180px;font-family:sans-serif;" placeholder="Search with Patient Name" />
+                                            </div>
+                                            <div class="col-sm-offset-1 col-sm-1">
+                                                <input id="btnSearch" type="submit" value="SEARCH" onclick="SetDataToLocalStorage();" class="btn btn-success" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-12" style="height:15px;"></div>
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col-sm-8 col-md-pull-1">
+                <table id="tblMain" align="left" class="table table-condensed table-striped">
+                    <tr style="background-color:#A239CA;color:whitesmoke;font-family:sans-serif;">
+                        <td style="background-color:#A239CA;color:whitesmoke;">
+                            Doctor Name
+                        </td>
+                        <td style="background-color:#A239CA;color:whitesmoke;">
+                            Service Type
+                        </td>
+                        <td style="background-color:#A239CA;color:whitesmoke;">
+                            Service Name
+                        </td>
+                        <td style="background-color:#A239CA;color:whitesmoke;">
+                            Days
+                        </td>
+                        <td style="background-color:#A239CA;color:whitesmoke;">
+                            Amount
+                        </td>
+                        <td style="background-color:#A239CA;color:whitesmoke;">
+                            Action
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select id="ddlType" onchange="ReadJson();" class="form-control input-sm ddlNormal">
+                                <option>DR SANDEEP GARG </option>
+                                <option>DR SANDEEP KAPOOR</option>
+                                <option>DR VAIBHAV KHANNA </option>
+                                <option>DR K B JAIN </option>
+                                <option>DR VAINKAIYA NAIDU </option>
+                                <option>DR AMIT SHAH </option>
+                            </select>
+                        </td>
+                        <td>
+                            <select id="ddlType" onchange="ReadJson();" class="form-control input-sm ddlNormal">
+                                <option>XRAY </option>
+                                <option>PROCEDURES </option>
+                                <option>ULTRASOUND </option>
+                                <option>MRI </option>
+                                <option>PATHOLOGY </option>
+                                <option>CT SCAN </option>
+                                <option>THERAPY </option>
+                                <option>MISC </option>
+                            </select>
+                        </td>
+                        <td>
+                            <select id="ddlTest" onchange="getData();" class="form-control input-sm ddlNormal"></select>
+                        </td>
+                        <td>
+                            <input id="txtDays" type="text" placeholder="Days" class="form-control input-sm txtAmount" />
+                        </td>
+                        <td>
+                            <input id="txtAmt" type="text" placeholder="Amount" disabled="disabled" class="form-control input-sm txtAmount" />
+                        </td>
+                        <td>
+                            <input id="btnAdd" type="submit" value="ADD" class="btn btn-success" style="font-family:sans-serif;" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-sm-4 col-md-push-1">
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12" style="font-weight:bold;padding-bottom:10px;">
+                                Patient Information
+                            </div>
+                            <div class="col-md-6">
+                                Patient Id
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:10px;">
+                                <input id="txtPatientId" type="text" readonly="readonly" value="100002555" class="form-control input-sm txtDisabled" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                Patient Name
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:10px;">
+                                <input id="txtPatientName" type="text" readonly="readonly" value="RAJA RAM TIWARI" class="txtDisabled form-control input-sm" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-6" style="font-family:sans-serif;">
+                                Mobile No
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:10px;">
+                                <input id="txtMobileNo" type="text" readonly="readonly" value="" class="form-control input-sm txtDisabled" />
+                            </div>
+                        </div>
+                        <div>
+                            <hr />
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-6" style="font-family:sans-serif;font-weight:500;">
+                                Doctor Name
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:20px;">
+                                <select id="ddlDoctorName" class="form-control input-sm ddlNormal">
+                                    <option>DR SANDEEP GARG </option>
+                                    <option>DR SANDEEP KAPOOR</option>
+                                    <option>DR VAIBHAV KHANNA </option>
+                                    <option>DR K B JAIN </option>
+                                    <option>DR VAINKAIYA NAIDU </option>
+                                    <option>DR AMIT SHAH </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-8" style="font-weight:bold;padding-bottom:10px;">
+                                Payment Information
+                            </div>
+                            <div class="col-md-4" style="font-weight:bold;padding-bottom:10px;">
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                Total Bill Amt
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:10px;">
+                                <input id="txtBillAmt" type="text" readonly="readonly" value="0" class="form-control input-sm txtAmountLength" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                Enter Disc
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:10px;">
+                                <input id="txtDisc" type="text" value="0" class="form-control input-sm txtAmountLength" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                Received
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:10px;">
+                                <input id="txtReceived" type="text" value="0" class="form-control input-sm txtAmountLength" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                Balance
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:10px;">
+                                <input id="txtBalance" type="text" value="0" readonly="readonly" class="form-control input-sm txtAmountLength" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-6 text-info">
+                                <input id="btnFinalSave" type="submit" value="SAVE" onclick="reprintreceipt();" class="btn btn-success btn-sm btn-block" />
+                            </div>
+                            <div class="col-md-6 text-info" style="padding-bottom:10px;">
+                                <input id="btnPrint" type="submit" value="PRINT" onclick="ReadApp();" class="btn btn-success btn-sm btn-block" />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+    <div id="divChild">
+        <div>
+            <button id="btn1" class="btn btn-info" value="Button1" onclick="ReadApp(this);">CLICK BUTTON 1 </button>
+            <button id="btn2" class="btn btn-info" value="Button2" onclick="ReadApp(this);">CLICK BUTTON 2</button>
+            <button id="btn3" class="btn btn-info" value="Button3" onclick="ReadApp(this);">CLICK BUTTON 3</button>
+            <button id="btn4" class="btn btn-info" value="Button4" onclick="ReadApp(this);">CLICK BUTTON 4</button>
+        </div>
+    </div>
+
+    @Html.Partial("_alert");
+    <div id="divalert" class="btn btn-warning" onclick="ReadApp();" style="height:auto;width:auto;"></div>
+</body>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+        $("#example").html("<input type='text' value ='ddd' class='form-control input-sm'> </input>");
+
+    });
+</script>

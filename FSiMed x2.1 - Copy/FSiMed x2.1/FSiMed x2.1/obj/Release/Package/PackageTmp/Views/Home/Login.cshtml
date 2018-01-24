@@ -1,0 +1,390 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+}
+
+<head>
+    <link href="~/CSS/Style.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnAdd").click(function () {
+                var Id = $("#ddlType").val();
+                var name = $("#ddlTest").val();
+                var address = $("#txtDays").val();
+                var mobileNo = $("#txtMobileNo").val();
+                var vCnt = 0;
+                var vTotal = 0;
+                var vLen = $("#tblMain tr").length - 1;
+
+                // Id = vLen;
+                $("#tblMain tr").each(function (e) {
+                    if (e > 1) {
+                        var ExId = $(this).find('td').eq(1).text();
+                        if (ExId == Id) {
+                            alert('Record already exists, choose another');
+                            vCnt = 1;
+                            return false;
+                        }
+                    }
+                });
+
+                //if (vCnt == 0) {
+                //    $("#tblMain tbody").append('<tr><td>' + Id + '</td><td>' + name + '</td><td>' + address + '</td><td>' + mobileNo +
+                //                               '</td><td><span id="btnAdd" onclick="Delete(this);" class="btn btn-danger glyphicon glyphicon-trash"></span></td></tr>');
+                //}
+                if (vCnt == 0) {
+                    $('<tr><td>' + Id + '</td><td>' + name + '</td><td>' + address + '</td><td>' + mobileNo +
+                                        '</td><td><span id="btnAdd" onclick="Delete(this);" class="btn btn-danger glyphicon glyphicon-trash"></span></td></tr>').insertAfter('#tblMain > tbody > tr:eq(1)');
+                }
+
+                Calculation();
+
+            });
+        });
+
+        function Delete(a) {
+            $(a).parents("tr").remove();
+            Calculation();
+        }
+
+        function Calculation() {
+            var vTotal = 0;
+            $("#txtBillAmt").val(0);
+            $("#tblMain tr").each(function (e) {
+                if (!isNaN(parseInt($(this).find('td').eq(3).text()))) {
+                    vTotal += parseInt($(this).find('td').eq(3).text());
+                    $("#txtBillAmt").val(vTotal);
+                }
+            });
+        }
+
+        function saveDate() {
+            var btnSave = $("#btnFinalSave");
+            btnSave.attr('disabled', true);
+            btnSave.val('Please Wait...');
+
+            var vChildProp = "";
+            var vArr = [];
+
+            $("#tblMain tr").each(function (e) {
+                if (e > 1) {
+                    vChildProp = {
+                        TypeName: $(this).find('td').eq(0).text(),
+                        TestName: $(this).find('td').eq(1).text(),
+                        Days: $(this).find('td').eq(2).text(),
+                        TotalAmt: $(this).find('td').eq(3).text()
+                    };
+
+                    vArr.push(vChildProp);
+                }
+
+            });
+
+            var commonBilling = {
+                PatientId: $('#txtPatientId').val(),
+                VisitNo: 1,
+                TotalAmt: $('#txtBillAmt').val(),
+                Discount: $('#txtDisc').val(),
+                NetAmount: $('#txtReceived').val(),
+                Details: vArr
+            };
+
+
+            $.ajax({
+                type: "POST",
+                url: "/Home/Create",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: JSON.stringify({ model: commonBilling }),
+                success: function (a) {
+                    alert(a);
+                    btnSave.attr('disabled', false);
+                    btnSave.val('SAVE');
+                },
+                error: function (b, c, d) {
+                    alert(d)
+                    btnSave.attr('disabled', false);
+                    btnSave.val('SAVE');
+                }
+            });
+
+        }
+
+        function ReadJson() {
+            $.ajax({
+                type: "get",
+                url: "/JsonFiles/Xray.json",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    $("#ddlTest").text('');
+                    $.each(data, function (e) {
+                        //if ($("#ddlTest :selected").val() == "Select Test") {
+                        //    $("#txtMobileNo").val(0);
+                        //    return false;
+                        //}
+                        //else {
+                        //    if (data[e].name == $("#ddlTest :selected").val()) {
+                        //        $("#txtMobileNo").val(data[e].amount);
+                        //        return false;
+                        //    }
+                        //}
+
+                        $("#ddlTest").append("<option>" + data[e].name + "</option>");
+                    });
+                },
+                error: function (a) {
+                    alert(a);
+                }
+            });
+
+        }
+
+        function getData() {
+
+            var vInput1 = $("#ddlTest :selected").val();
+            $("#txtAmt").val(0);
+
+            $.ajax({
+                type: "post",
+                url: "/Home/getData",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: '{Name: "' + vInput1 + '" }',
+                success: function (a) {
+                    $("#txtAmt").val(a);
+                },
+                error: function (b) {
+                    alert(b);
+                    btnSave.attr('disabled', false);
+                    btnSave.val('SAVE');
+                }
+            });
+
+        }
+    </script>
+
+</head>
+
+<body>
+    <div class="col-md-12" style="height:20px;"></div>
+    <div class="container" id="divMain1">
+        <div class="row">
+
+            <div class="col-md-12">
+                <div class="container">
+                    <div class="row">
+
+
+                        <div class="col-md-12">
+                            <div class="col-md-5 col-sm-pull-0">
+                                <div class="container">
+                                    <div class="row">
+                                        <h2>Common Billing Screen</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-7" style="padding-top:22px;">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="col-sm-2 col-sm-pull-1">
+                                                <input id="txtPatientIdSearch" type="text" value="" class="form-control input-sm" style="width:180px;font-family:sans-serif;" placeholder="Search with Patient Id" />
+                                            </div>
+                                            <div class="col-sm-offset-2 col-sm-2 col-sm-pull-1">
+                                                <input id="txtPatientNameSearch" type="text" value="" class="form-control input-sm" style="width:180px;font-family:sans-serif;" placeholder="Search with Patient Name" />
+                                            </div>
+                                            <div class="col-sm-offset-2 col-sm-2 col-sm-pull-1">
+                                                <input id="txtMobileNoSearch" type="text" value="" class="form-control input-sm" style="width:180px;font-family:sans-serif;" placeholder="Search with Patient Name" />
+                                            </div>
+                                            <div class="col-sm-offset-1 col-sm-1">
+                                                <input id="btnSearch" type="submit" value="SEARCH" class="btn btn-success" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-12" style="height:15px;"></div>
+
+    <div class="container">
+        <div class="row">
+
+            <div class="col-sm-8">
+                <table id="tblMain" align="left" class="table table-condensed table-striped ">
+                    <tr style="background-color:#A239CA;color:whitesmoke;font-family:sans-serif;">
+                        <td style="background-color:#A239CA;color:whitesmoke;">
+                            Service Type
+                        </td>
+                        <td style="background-color:#A239CA;color:whitesmoke;">
+                            Service Name
+                        </td>
+                        <td style="background-color:#A239CA;color:whitesmoke;">
+                            Days
+                        </td>
+                        <td style="background-color:#A239CA;color:whitesmoke;">
+                            Amount
+                        </td>
+                        <td style="background-color:#A239CA;color:whitesmoke;">
+                            Action
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select id="ddlType" onchange="ReadJson();" class="form-control input-sm" style="width:210px;">
+                                <option>XRAY </option>
+                                <option>PROCEDURES </option>
+                                <option>ULTRASOUND </option>
+                                <option>MRI </option>
+                                <option>PATHOLOGY </option>
+                                <option>CT SCAN </option>
+                                <option>THERAPY </option>
+                                <option>MISC </option>
+                            </select>
+                        </td>
+                        <td>
+                            <select id="ddlTest" onchange="getData();" class="form-control input-sm" style="width:210px;">
+                            </select>
+                        </td>
+                        <td>
+                            <input id="txtDays" type="text" placeholder="Days" class="form-control input-sm" style="width:100px;font-family:sans-serif;" />
+                        </td>
+                        <td>
+                            <input id="txtAmt" type="text" placeholder="Amount" disabled="disabled" class="form-control input-sm" style="width:100px;font-family:sans-serif;" />
+                        </td>
+                        <td>
+                            <input id="btnAdd" type="submit" value="ADD" class="btn btn-success" style="font-family:sans-serif;" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="col-sm-4">
+                @*style="background-color:#b2cecf;"*@
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-12" style="font-weight:bold;padding-bottom:10px;">
+                                Patient Information
+                            </div>
+                            <div class="col-md-6">
+                                Patient Id
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:10px;">
+                                <input id="txtPatientId" type="text" readonly="readonly" value="100002555" class="form-control input-sm"/>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                Patient Name
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:10px;">
+                                <input id="txtPatientName" type="text" readonly="readonly" value="RAJA RAM TIWARI" class="txtDisabled form-control input-sm" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-6" style="font-family:sans-serif;">
+                                Mobile No
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:10px;">
+                                <input id="txtMobileNo" type="text" readonly="readonly" value="" class="form-control input-sm" style="width:200px;background-color:#A239CA;color:whitesmoke;" />
+                            </div>
+                        </div>
+                        <div>
+                            <hr />
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-6" style="font-family:sans-serif;font-weight:500;">
+                                Doctor Name
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:20px;">
+                                <select id="ddlDoctorName" class="form-control input-sm" style="width:200px;">
+                                    <option>DR SANDEEP GARG </option>
+                                    <option>DR SANDEEP KAPOOR</option>
+                                    <option>DR VAIBHAV KHANNA </option>
+                                    <option>DR K B JAIN </option>
+                                    <option>DR VAINKAIYA NAIDU </option>
+                                    <option>DR AMIT SHAH </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-8" style="font-weight:bold;padding-bottom:10px;">
+                                Payment Information
+                            </div>
+                            <div class="col-md-4" style="font-weight:bold;padding-bottom:10px;">
+
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                Total Bill Amt
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:10px;">
+                                <input id="txtBillAmt" type="text" readonly="readonly" value="0" class="form-control input-sm" style="width:200px;background-color:#A239CA;color:whitesmoke;" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                Enter Disc
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:10px;">
+                                <input id="txtDisc" type="text" value="0" class="form-control input-sm" style="width:200px;" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                Received
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:10px;">
+                                <input id="txtReceived" type="text" value="0" class="form-control input-sm" style="width:200px;" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                Balance
+                            </div>
+                            <div class="col-md-4 text-info col-sm-pull-2" style="padding-bottom:10px;">
+                                <input id="txtBalance" type="text" value="0" readonly="readonly" class="form-control input-sm" style="width:200px;background-color:#A239CA;color:whitesmoke;" />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                           
+                            <div class="col-md-12" style="padding-bottom:10px;">
+                                <input id="btnFinalSave" type="submit" value="SAVE" onclick="saveDate();" class="btn btn-success btn-sm btn-block" />
+                            </div>
+
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-12">
+                                <input id="btnPrint" type="submit" value="PRINT" class="btn btn-success btn-sm btn-block" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    @Html.Partial("_alert");
+
+</body>

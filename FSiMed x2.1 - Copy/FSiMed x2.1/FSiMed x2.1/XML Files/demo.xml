@@ -1,0 +1,33 @@
+<?xml version="1.0" standalone="yes"?>
+<DocumentElement>
+  <Menu>
+    <id>1</id>
+    <name>RECEPTION</name>
+    <view>home/reception</view>
+  </Menu>
+  <Menu>
+    <id>2</id>
+    <name>FINANCE</name>
+    <view>home/finane</view>
+  </Menu>
+  <Menu>
+    <id>3</id>
+    <name>PHARMACY</name>
+    <view>home/pharmacy</view>
+  </Menu>
+   <Menu>
+      <id>4</id>
+      <name>DIAGNOSTICS</name>
+    <view>home/diagnostics</view>
+  </Menu>
+   <Menu>
+      <id>5</id>
+      <name>STORE</name>
+    <view>home/store</view>
+  </Menu>
+   <Menu>
+      <id>6</id>
+      <name>PATIENT MANAGEMENT</name>
+      <view>home/patient management</view>
+  </Menu>
+</DocumentElement>
