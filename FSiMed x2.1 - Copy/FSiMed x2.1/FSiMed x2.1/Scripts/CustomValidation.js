@@ -1,9 +1,9 @@
-﻿
+
 $(document).ready(function () {
 
     $(".txtAmount, .txtAmountLength").keydown(function (e) {
 
-        var vSkipValues = [9, 32, 17, 18, 20, 13, 8];
+        var vSkipValues = [9, 32, 17, 18, 20, 13, 8, 25, 30];
 
         var vCnt = 0;
 
